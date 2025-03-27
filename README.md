@@ -19,7 +19,7 @@ Put your README here. Answer the following questions.
 | Name            | CWID      |
 |-----------------|-----------|
 | Ashish Hulkoti  | A20548738 |
-| Harish Hebbsur  | A20552584 |
+| Harish Hebsur  | A20552584 |
 
 ### What does the model do?
 This implementation solves **L1-regularized linear regression (Lasso)** using the Homotopy method, which:
