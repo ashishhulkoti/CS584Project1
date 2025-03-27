@@ -87,3 +87,70 @@ pip install -r requirements.txt
 # To run the Tests
 cd LassoHomotopy/tests
 pytest -v
+```
+## Sample Usage
+
+```python
+import numpy as np
+from lasso_homotopy import LassoHomotopyModel, LassoHomotopyResults
+
+# Initialize model with custom parameters
+model = LassoHomotopyModel(
+    reg_param=0.8,               # Regularization strength
+    convergence_threshold=1e-5,  # Stopping tolerance
+    maximum_iterations=500       # Iteration limit
+)
+
+# Configuration
+np.random.seed(42)
+n_samples = 200
+n_features = 30
+sparsity = 0.7  # 70% zero coefficients
+
+# Create sparse ground truth
+true_coef = np.random.randn(n_features)
+true_coef[np.random.rand(n_features) < sparsity] = 0
+
+# Generate correlated features
+X = np.random.randn(n_samples, n_features)
+X[:, 1] = 0.6 * X[:, 0] + np.random.normal(0, 0.1, n_samples)  # Correlated features
+X[:, 3] = 0.4 * X[:, 2] + np.random.normal(0, 0.3, n_samples)
+
+# Generate targets with noise
+y = X @ true_coef + np.random.normal(0, 0.5, n_samples)
+
+# Train-test split
+X_train, y_train = X[:150], y[:150]
+X_test, y_test = X[150:], y[150:]
+
+# Fit the model
+results = model.train(X_train, y_train)
+
+# Display results
+print(f"Number of non-zero coefficients: {np.sum(results.coefficients != 0)}/{n_features}")
+print(f"Intercept: {results.intercept:.4f}")
+print("Top 5 coefficients:")
+for i in np.argsort(np.abs(results.coefficients))[-5:]:
+    print(f"Feature {i}: True={true_coef[i]:.4f} Predicted={results.coefficients[i]:.4f}")
+
+# Make predictions
+train_preds = results.predict(X_train)
+test_preds = results.predict(X_test)
+
+# Calculate metrics
+def r_squared(y_true, y_pred):
+    return 1 - np.var(y_true - y_pred) / np.var(y_true)
+
+print(f"\nTraining R²: {r_squared(y_train, train_preds):.4f}")
+print(f"Test R²: {r_squared(y_test, test_preds):.4f}")
+
+# Feature importance visualization
+import matplotlib.pyplot as plt
+plt.figure(figsize=(10,4))
+plt.stem(np.where(results.coefficients != 0)[0], 
+         results.coefficients[results.coefficients != 0])
+plt.title("Non-zero Coefficients")
+plt.xlabel("Feature Index")
+plt.ylabel("Coefficient Value")
+plt.show()
+```
