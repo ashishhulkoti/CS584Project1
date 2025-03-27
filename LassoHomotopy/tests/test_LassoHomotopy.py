@@ -115,3 +115,45 @@ def test_predictions():
     # Basic validation
     assert len(predictions) == len(X_test), "Number of predictions doesn't match input size"
     assert not np.any(np.isnan(predictions)), "Predictions contain NaN values"
+
+def test_synthetic_data():
+    # Create artificial dataset
+    rng = np.random.default_rng(seed=42)
+    sample_count, feature_count = 100, 10
+    X = rng.standard_normal((sample_count, feature_count))
+    
+    # Define true model parameters
+    actual_coefficients = np.zeros(feature_count)
+    actual_coefficients[0] = 1
+    actual_coefficients[2] = -1
+    actual_coefficients[5] = 0.5
+    
+    # Compute target values with added noise
+    y = X @ actual_coefficients + rng.normal(0, 0.1, sample_count)
+    
+    # Set up and train the Lasso model
+    lasso_model = LassoHomotopyModel(reg_param=0.1, convergence_threshold=1e-6)
+    model_output = lasso_model.train(X, y)
+    
+    # Identify significant coefficients
+    estimated_significant = np.abs(model_output.coefficients) > 1e-3
+    actual_significant = np.abs(actual_coefficients) > 0
+    
+    print("Actual significant coefficients:", np.nonzero(actual_significant)[0])
+    print("Model-estimated significant coefficients:", np.nonzero(estimated_significant)[0])
+    
+    # Verify all true significant coefficients are identified
+    assert np.all(np.isin(np.nonzero(actual_significant)[0], np.nonzero(estimated_significant)[0])), \
+        "Model failed to identify all true significant coefficients"
+    
+    # Check accuracy of estimated coefficients
+    for idx in np.nonzero(actual_significant)[0]:
+        assert np.isclose(model_output.coefficients[idx], actual_coefficients[idx], atol=0.2), \
+            f"Estimated coefficient at index {idx} is not sufficiently close to the true value"
+    
+    # Evaluate model performance
+    prediction_error = np.mean((y - model_output.predict(X))**2)
+    print(f"Mean Squared Prediction Error: {prediction_error}")
+    
+    # Ensure prediction error is within acceptable range
+    assert prediction_error < 0.1, f"Prediction error ({prediction_error}) exceeds acceptable threshold"
