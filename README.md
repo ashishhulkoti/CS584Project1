@@ -67,6 +67,20 @@ We implemented a multi-layered testing strategy:
 | `convergence_threshold` | float | Optimization tolerance | 1e-4 to 1e-8 | 1e-6 |
 | `maximum_iterations` | int | Max optimization steps | 100-10,000 | 1000 |
 
+### Are there specific inputs that your implementation has trouble with? Given more time, could you work around these or is it fundamental?
+
+1. Unscaled Features
+Issue: Biased regularization due to varying feature scales.
+Solvable: Yes - Implement automatic feature standardization within the model.
+
+2. High-Dimensional Data
+Issue: Slow performance with >10,000 features.
+Solvable: Yes - Add feature screening (e.g., correlation-based filtering) to reduce dimensionality.
+
+3. Non-Linear Relationships
+Issue: Poor performance on non-linear data patterns.
+Solvable: No - Requires fundamental algorithm changes (e.g., kernel methods).
+
 
 ## Installation
 
