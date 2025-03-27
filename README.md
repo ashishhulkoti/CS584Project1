@@ -87,7 +87,7 @@ Solvable: No - Requires fundamental algorithm changes (e.g., kernel methods).
 ```bash
 # Clone repository
 git clone <Repo URL>
-cd 
+cd CS584Project1
 
 # Create a Virtual environment
 python -m venv venv
