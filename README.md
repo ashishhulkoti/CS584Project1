@@ -18,8 +18,8 @@ Put your README here. Answer the following questions.
 ## Team Members
 | Name            | CWID      |
 |-----------------|-----------|
-| Ashish Hulkoti  | A20438738 |
-| Harish Hebbsur  | 2342r3    |
+| Ashish Hulkoti  | A20548738 |
+| Harish Hebbsur  | A20552584 |
 
 ### What does the model do?
 This implementation solves **L1-regularized linear regression (Lasso)** using the Homotopy method, which:
@@ -75,5 +75,15 @@ We implemented a multi-layered testing strategy:
 git clone <Repo URL>
 cd 
 
+# Create a Virtual environment
+python -m venv venv
+
+# Switch to virtual environment
+source venv/bin/activate
+
 # Install dependencies
 pip install -r requirements.txt
+
+# To run the Tests
+cd LassoHomotopy/tests
+pytest -v
