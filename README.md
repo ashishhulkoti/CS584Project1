@@ -14,3 +14,66 @@ Put your README here. Answer the following questions.
 * How did you test your model to determine if it is working reasonably correctly?
 * What parameters have you exposed to users of your implementation in order to tune performance? 
 * Are there specific inputs that your implementation has trouble with? Given more time, could you work around these or is it fundamental?
+
+## Team Members
+| Name            | CWID      |
+|-----------------|-----------|
+| Ashish Hulkoti  | A20438738 |
+| Harish Hebbsur  | 2342r3    |
+
+### What does the model do?
+This implementation solves **L1-regularized linear regression (Lasso)** using the Homotopy method, which:
+- Computes exact solutions along the entire regularization path
+- Maintains an active set of features for efficient updates
+- Supports both batch training and online/incremental learning
+- Automatically induces sparsity in coefficients through feature selection
+
+### When should it be used?
+
+| Use Case | Recommended | Reasoning |
+|----------|-------------|-----------|
+| Feature selection | ✅ | Produces interpretable models with few non-zero coefficients |
+| Collinear features | ✅ | Handles correlated predictors effectively |
+| Online learning | ✅ | Supports incremental updates for streaming data |
+| Moderate-scale problems | ✅ | Works well when features ≤10,000 |
+
+# Example Use Case: Real-Time Fraud Detection System
+
+## Scenario Overview
+**Industry**: Financial Services  
+**Problem**: Detect credit card fraud in real-time while identifying key risk factors  
+**Challenge**: Need interpretable model that can:
+- Process transactions incrementally
+- Handle 100+ correlated features (purchase patterns, location data, etc.)
+- Explain which features flag potential fraud
+
+### How did you test your model to determine if it is working reasonably correctly?
+
+We implemented a multi-layered testing strategy:
+
+| Test Type | Purpose | Example Verification |
+|-----------|---------|----------------------|
+| Synthetic Data | Verify correctness | Check coefficients match ground truth |
+| Collinearity Tests | Confirm sparsity | Verify zeros emerge when `reg_param` is large |
+| Online Consistency | Validate updates | Match batch vs sequential results |
+| Prediction Tests | Check outputs | Ensure R² > 0.9 on noise-free data |
+| Edge Cases | Test robustness | Empty feature sets, single samples |
+
+### What parameters have you exposed to users of your implementation in order to tune performance?
+
+| Parameter | Type | Description | Recommended Range | Default |
+|-----------|------|-------------|-------------------|---------|
+| `reg_param` (α) | float | L1 regularization strength | 0.01 to 10.0 | 1.0 |
+| `convergence_threshold` | float | Optimization tolerance | 1e-4 to 1e-8 | 1e-6 |
+| `maximum_iterations` | int | Max optimization steps | 100-10,000 | 1000 |
+
+
+## Installation
+
+```bash
+# Clone repository
+git clone <Repo URL>
+cd 
+
+# Install dependencies
+pip install -r requirements.txt
